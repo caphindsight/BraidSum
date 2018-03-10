@@ -1,3 +1,5 @@
-/poly/target/
 **/*.swp
 /poly/Cargo.lock
+/poly/target/
+/braid3/Cargo.lock
+/braid3/target/
