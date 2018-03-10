@@ -4,10 +4,28 @@ mod test;
 use std::collections::HashMap;
 
 /// Laurent Polynomial in one variable (t), with integer coefficients.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct Poly {
   coef_map: HashMap<i64, i64>,
 }
+
+impl PartialEq for Poly {
+  fn eq(&self, rhs: &Poly) -> bool {
+    for (k, v) in self.coef_map.iter() {
+      if *v != rhs.coef_map.get(k).cloned().unwrap_or(0) {
+        return false;
+      }
+    }
+    for (k, v) in rhs.coef_map.iter() {
+      if *v != self.coef_map.get(k).cloned().unwrap_or(0) {
+        return false;
+      }
+    }
+    true
+  }
+}
+
+impl Eq for Poly {}
 
 impl Poly {
   /// Gives the P(t) = 0 polynomial.
@@ -120,5 +138,27 @@ impl std::ops::MulAssign<i64> for Poly {
     for (_, v) in self.coef_map.iter_mut() {
       *v *= rhs;
     }
+  }
+}
+
+impl<'a> std::ops::Mul for &'a Poly {
+  type Output = Poly;
+  fn mul(self, rhs: &'a Poly) -> Poly {
+    let mut res = HashMap::new();
+    for (k1, v1) in self.coef_map.iter() {
+      for (k2, v2) in rhs.coef_map.iter() {
+        let ind: i64 = *k1 + *k2;
+        let current = res.get(&ind).cloned().unwrap_or(0);
+        res.insert(ind, current + (*v1) * (*v2));
+      }
+    }
+    res.shrink_to_fit();
+    Poly { coef_map: res }
+  }
+}
+
+impl<'a> std::ops::MulAssign<&'a Poly> for Poly {
+  fn mul_assign(&mut self, rhs: &'a Poly) {
+    self.coef_map = (&*self * rhs).coef_map;
   }
 }

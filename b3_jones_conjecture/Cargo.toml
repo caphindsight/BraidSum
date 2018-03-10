@@ -1,0 +1,8 @@
+[package]
+name = "b3_jones_conjecture"
+version = "0.1.0"
+authors = ["Cap. Hindsight <hindsight@yandex.ru>"]
+
+[dependencies]
+poly = { path = "../poly", version = "0.1.0" }
+braid3 = { path = "../braid3", version = "0.1.0" }

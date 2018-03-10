@@ -22,6 +22,14 @@ impl Braid {
     Braid { twists: Vec::new() }
   }
 
+  pub fn canonical_len(&self) -> usize {
+    self.twists.len()
+  }
+
+  pub fn last_twist(&self) -> Option<Twist> {
+    self.twists.last().cloned()
+  }
+
   fn ends_with(&self, ending: &Vec<Twist>) -> bool {
     let n = self.twists.len();
     let m = ending.len();

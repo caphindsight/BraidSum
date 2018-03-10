@@ -29,6 +29,8 @@ fn equality() {
   poly.set_coef(-1, 1);
   assert_ne!(&poly, &Poly::zero());
   assert_eq!(&poly, &Poly::inverse_identity());
+  poly.set_coef(5, 0);
+  assert_eq!(&poly, &Poly::inverse_identity());
 }
 
 #[test]
@@ -45,7 +47,24 @@ fn arithmetic() {
   poly2.set_coef(1, -1);
   poly2 *= 2;
 
-  assert_eq!(&poly1, &-&poly2);;
+  assert_eq!(&poly1, &-&poly2);
+}
+
+#[test]
+fn multiplication() {
+  let mut poly1 = Poly::zero();
+  poly1.set_coef(2, 1);
+  poly1.set_coef(0, 1);
+  
+  let mut poly2 = Poly::zero();
+  poly2.set_coef(2, 1);
+  poly2.set_coef(0, -1);
+
+  let mut poly3 = Poly::zero();
+  poly3.set_coef(4, 1);
+  poly3.set_coef(0, -1);
+
+  assert_eq!(&(&poly1 * &poly2), &poly3);
 }
 
 #[test]

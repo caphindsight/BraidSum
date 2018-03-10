@@ -1,0 +1,16 @@
+[[package]]
+name = "b3_jones_conjecture"
+version = "0.1.0"
+dependencies = [
+ "braid3 0.1.0",
+ "poly 0.1.0",
+]
+
+[[package]]
+name = "braid3"
+version = "0.1.0"
+
+[[package]]
+name = "poly"
+version = "0.1.0"
+

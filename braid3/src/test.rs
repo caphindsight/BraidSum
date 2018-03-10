@@ -5,7 +5,7 @@ fn get_braids_of_length(n: u32) -> Vec<Braid> {
     return vec![Braid::identity()];
   }
   let prev = get_braids_of_length(n - 1);
-  let mut res = Vec::with_capacity(prev.len() * 4);
+  let mut res = Vec::with_capacity(prev.len() * 3);
   for i in &prev {
     res.append(&mut i.descendants());
   }
