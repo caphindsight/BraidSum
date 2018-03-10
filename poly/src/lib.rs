@@ -77,6 +77,31 @@ impl Poly {
   }
 }
 
+impl ToString for Poly {
+  fn to_string(&self) -> String {
+    let mut indices = Vec::new();
+    for (k, v) in self.coef_map.iter() {
+      if *v != 0 {
+        indices.push((*k, *v));
+      }
+    }
+    indices.sort();
+    let mut res = "P(t) = ".to_string();
+    let mut first = true;
+    for (k, v) in indices {
+      if first {
+        first = false;
+      } else {
+        res.push_str("  +  ");
+      }
+      res.push_str(&v.to_string());
+      res.push_str(" * t^");
+      res.push_str(&k.to_string());
+    }
+    res
+  }
+}
+
 impl<'a> std::ops::Add for &'a Poly {
   type Output = Poly;
   fn add(self, rhs: &'a Poly) -> Poly {

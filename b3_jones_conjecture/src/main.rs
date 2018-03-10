@@ -37,7 +37,8 @@ struct BraidData {
 // Calculate Jones polynomial given the Kauffman bracket and the writhe number.
 fn calc_jones(kauffman: &Poly, writhe: i64) -> Poly {
   let mut writhe_poly = Poly::zero();
-  writhe_poly.set_coef(-3 * writhe, 1 - 2 * (writhe % 2));
+  let minus = if writhe % 2 == 0 { 1 } else { -1 };
+  writhe_poly.set_coef(-3 * writhe, minus);
   kauffman * (&writhe_poly)
 }
 
@@ -254,6 +255,15 @@ struct BraidJones {
   jones: Poly,
 }
 
+impl BraidJones {
+  fn clone_from(data: &BraidData) -> BraidJones {
+    BraidJones {
+      braid: data.braid.clone(),
+      jones: data.jones.clone(),
+    }
+  }
+}
+
 // Recursive function. Accepts the maximal canonical length of the braid,
 // returns a pair of (bj, bd), where:
 // * bj is a list of all BraidJones structures for all braids with canonical
@@ -263,10 +273,7 @@ struct BraidJones {
 fn calc_braid_jones_rec(n: u32) -> (Vec<BraidJones>, Vec<BraidData>) {
   if n == 0 {
     let bdata = BraidData::identity_braid();
-    let bjones = BraidJones {
-      braid: bdata.braid.clone(),
-      jones: bdata.jones.clone(),
-    };
+    let bjones = BraidJones::clone_from(&bdata);
     return (vec![bjones], vec![bdata]);
   }
 
@@ -274,10 +281,7 @@ fn calc_braid_jones_rec(n: u32) -> (Vec<BraidJones>, Vec<BraidData>) {
   let mut new_bdata = Vec::with_capacity(bdata.len() * 3);
   for i in bdata.into_iter() {
     for d in i.descendants().into_iter() {
-      bjones.push(BraidJones {
-        braid: d.braid.clone(),
-        jones: d.jones.clone(),
-      });
+      bjones.push(BraidJones::clone_from(&d));
       new_bdata.push(d);
     }
   }
@@ -292,12 +296,50 @@ fn calc_braid_jones(n: u32) -> Vec<BraidJones> {
   res
 }
 
+pub fn present_braid(braid: &Braid) {
+  let n = braid.twists.len();
+  if n == 0 {
+    println!("| | |");
+    println!("| | |");
+    println!("| | |");
+  }
+  for i in 0..n {
+    let twist = braid.twists[n - i - 1];
+    match twist {
+      Twist::A => {
+        println!(r"\ / |");
+        println!(r" /  |");
+        println!(r"/ \ |");
+      },
+      Twist::B => {
+        println!(r"| \ /");
+        println!(r"|  / ");
+        println!(r"| / \");
+      },
+      Twist::Ainv => {
+        println!(r"\ / |");
+        println!(r" \  |");
+        println!(r"/ \ |");
+      },
+      Twist::Binv => {
+        println!(r"| \ /");
+        println!(r"|  \ ");
+        println!(r"| / \");
+      },
+    }
+  }
+}
+
 fn main() {
-  let n = 14;  // Upper limit on canonical braid length.
+  let n = 4;  // Upper limit on canonical braid length.
   let bj = calc_braid_jones(n);
   let mut last_zero_index_change_braid_len = -1_i64;
   for i in bj.iter() {
-    // println!("{:?}\t  {:?}", &i.braid, &i.jones);
+    present_braid(&i.braid);
+    println!("Jones: {}", &i.jones.to_string());
+    println!("");
+    println!("");
+    println!("");
     if i.jones.get_coef(0) != 0 {
       last_zero_index_change_braid_len = i.braid.canonical_len() as i64;
     }

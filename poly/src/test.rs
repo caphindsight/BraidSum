@@ -68,6 +68,28 @@ fn multiplication() {
 }
 
 #[test]
+fn multiplication_advanced() {
+  let mut kauffman_unknot = Poly::zero();
+  kauffman_unknot.set_coef(-2, -1);
+  kauffman_unknot.set_coef(2, -1);
+
+  let mut kauffman_unknot_2 = kauffman_unknot.clone();
+  kauffman_unknot_2 *= &kauffman_unknot;
+
+  let mut kauffman_unknot_3 = kauffman_unknot_2.clone();
+  kauffman_unknot_3 *= &kauffman_unknot;
+
+  let res = &(&Poly::identity() * &kauffman_unknot_3) +
+            &(&Poly::inverse_identity() * &kauffman_unknot_2);
+
+  let mut expected = Poly::zero();
+  expected.set_coef(-1, -1);
+  expected.set_coef(3, -2);
+  expected.set_coef(7, -1);
+  assert_eq!(&res, &expected);
+}
+
+#[test]
 fn mirror() {
   assert_eq!(&Poly::zero().mirror(), &Poly::zero());
   assert_eq!(&Poly::identity().mirror(), &Poly::inverse_identity());

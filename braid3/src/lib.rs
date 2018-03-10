@@ -13,7 +13,7 @@ pub enum Twist {
 /// Represents a braid (a sequence of twist) on the set of three strands.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Braid {
-  twists: Vec<Twist>,
+  pub twists: Vec<Twist>,
 }
 
 impl Braid {
